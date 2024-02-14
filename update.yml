@@ -1,0 +1,25 @@
+---
+- hosts: node1,node2
+  become: true
+  tasks:
+  - name: Update package lists on all nodes
+    yum_update_facts:
+
+  - name: Update all packages on all nodes
+    yum:
+      name: "*"
+      state: latest
+      exclude: ["kernel"]  # Optional: Exclude specific packages
+    when: ansible_release != "8"  # Skip update if RHEL 8 (already uses dnf)
+
+  - name: Update all packages on RHEL 8 nodes using dnf
+    dnf:
+      name: "*"
+      state: latest
+      exclude: ["kernel"]  # Optional: Exclude specific packages
+    when: ansible_release == "8"
+
+  - name: Reboot nodes if required
+    reboot:
+
+
