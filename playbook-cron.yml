@@ -1,0 +1,41 @@
+---
+- name: Configuration des tâches cron
+  hosts: 
+    - node1
+    - node2
+  become: true
+  tasks:
+    - name: Planifier l'écriture de la date toutes les 2 heures de 8h à 12h et de 14h à 18h
+      cron:
+        name: "Write date every 2 hours"
+        minute: "2"
+        hour: "8-11,14-17"
+        job: "date >> /path/to/date"
+        user: ansible
+
+    - name: Planifier l'écriture du nom d'utilisateur toutes les 30 secondes
+      cron:
+        name: "Write logged-in user every 30 seconds"
+        minute: "*/1"
+        job: "whoami >> /path/to/user"
+        user: ansible
+
+    - name: Planifier un reboot de la machine le 1er et 15 du mois à 2h30
+      cron:
+        name: "Reboot on 1st and 15th at 2:30"
+        minute: "30"
+        hour: "2"
+        day: "1,15"
+        job: "/sbin/reboot"
+        user: root
+
+    - name: Planifier l'écriture de "hello" toutes les quarts d'heure de 15h à 19h du lundi au vendredi seulement en 1ère quinzaine du troisième trimestre
+      cron:
+        name: "Write 'hello' every 15 minutes from 15h to 19h on weekdays in the first half of the third quarter"
+        minute: "*/15"
+        hour: "15-18"
+        month: "7"
+        weekday: "1-5"
+        job: "echo 'hello' >> /path/to/test"
+        user: ansible
+

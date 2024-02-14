@@ -1,0 +1,23 @@
+---
+- name: Configuration du serveur web
+  hosts: 
+    - node1
+    - node2
+  become: true
+  tasks:
+    - name: Installer le paquet httpd
+      yum:
+        name: httpd
+        state: present
+
+    - name: Démarrer et activer le service httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Créer un fichier test sous /var/www/html
+      copy:
+        content: "ceci est un simple test de playbook"
+        dest: /var/www/html/test
+

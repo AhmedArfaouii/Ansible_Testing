@@ -1,0 +1,5 @@
+---
+- hosts: node1
+  tasks:
+  - name: Check the value of variable {{ name }}
+    command: "echo $name" 

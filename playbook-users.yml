@@ -1,0 +1,50 @@
+---
+- name: Configuration des utilisateurs et des permissions
+  hosts: 
+    - node1
+    - node2
+  become: true
+  tasks:
+    - name: Créer le groupe computestream
+      group:
+        name: computestream
+        state: present
+
+    - name: Créer le répertoire /exam/computestream
+      file:
+        path: /exam/computestream
+        state: directory
+        owner: root
+        group: computestream
+        mode: "0755"
+
+    - name: Créer l'utilisateur harry
+      user:
+        name: harry
+        comment: "student"
+        groups: computestream
+        createhome: yes
+
+    - name: Créer l'utilisateur natasha
+      user:
+        name: natasha
+        comment: "student2"
+        shell: /sbin/nologin
+        createhome: yes
+
+    - name: Copier le fichier /etc/services dans le répertoire personnel de tout nouvel utilisateur
+      copy:
+        src: /etc/services
+        dest: "/home/{{ item }}/services"
+        owner: "{{ item }}"
+        group: "{{ item }}"
+      loop: "{{ ansible_users }}"
+      when: item in ansible_users
+
+    - name: Modifier le fichier /etc/sudoers
+      lineinfile:
+        path: /etc/sudoers
+        insertbefore: EOF
+        line: "%wheel ALL=(ALL) NOPASSWD: ALL"
+      when: ansible_distribution == 'RedHat'
+

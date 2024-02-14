@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+  - name: install apache2
+    yum:
+      name: apache

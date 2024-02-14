@@ -1,0 +1,68 @@
+---
+- name: Configuration du serveur intranet
+  hosts: 
+    - node1
+    - node2
+  become: true
+  tasks:
+    - name: Vérifier l'installation de httpd et firewalld
+      yum:
+        name: "{{item}}"
+        state: present
+      loop:
+        - httpd
+        - firewalld
+
+    - name: Modifier le contenu de la page index.html
+      lineinfile:
+        path: /var/www/html/index.html
+        line: "test de la page web"
+        insertafter: "<h1>"
+      notify: Restart Apache
+
+    - name: Démarrer et activer le service firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: Autoriser l'accès au service httpd dans firewalld
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+      notify: Restart Firewalld
+
+    - name: Démarrer et activer le service httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Restart Apache
+      service:
+        name: httpd
+        state: restarted
+
+    - name: Restart Firewalld
+      service:
+        name: firewalld
+        state: restarted
+
+- name: Vérification de l'accès aux pages web sur ansible1 et ansible2
+  hosts: localhost
+  tasks:
+    - name: Vérifier l'accès aux pages web sur ansible1
+      uri:
+        url: http://node1
+      register: result_node1
+
+    - name: Vérifier l'accès aux pages web sur ansible2
+      uri:
+        url: http://node2
+      register: result_node2
+
+    - debug:
+        msg: "Accès aux pages web sur node1 : {{ result_node1.status }}, Accès aux pages web sur node2 : {{ result_node2.status }}"
+
