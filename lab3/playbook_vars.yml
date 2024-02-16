@@ -1,0 +1,8 @@
+---
+- name: Deploy and start apache httpd service
+  hosts: node1
+  vars:
+    web_pkg: httpd
+    firewall_pkg: firewalld
+    python_pkg: python3-PyMySQL
+    rule: http
