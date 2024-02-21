@@ -1,0 +1,14 @@
+---
+- name: Modifier /etc/motd sur ansible1
+  hosts: node1
+  tasks:
+    - name: Mettre à jour le fichier /etc/motd
+      ansible.builtin.copy:
+        dest: /etc/motd
+        content: |
+          Bonjour.
+          Ce message vous parvient de la machine "{{ ansible_hostname }}"
+          Mon adresse IPv4 est "{{ ansible_default_ipv4.address }}"
+          Mon serveur dns est : "{{ ansible_dns.nameservers | join(', ') }}"
+        mode: '0644'
+

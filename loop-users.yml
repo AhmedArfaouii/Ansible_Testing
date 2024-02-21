@@ -1,0 +1,22 @@
+---
+- hosts: node1
+  
+  vars_files:
+    - /var/users.yml
+    - /var/grps.yml
+  tasks:
+    - name: Créer les utilisateurs
+      user:
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        comment: "{{ item.comment }}"
+        groups: "{{ item.groups }}"
+        shell: "{{ item.shell }}"
+        state: present
+      loop: "{{ users }}"
+    - name: Créer les groupes
+      group:
+        name: "{{ item.name }}"
+        gid: "{{ item.gid }}"
+        state: present
+      loop: "{{ my_groups }}"

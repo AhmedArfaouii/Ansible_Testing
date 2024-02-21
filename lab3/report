@@ -1,0 +1,5 @@
+Host=hostname
+Memory=total memory in mb
+Distribution= redhat distribution
+Disk_size= the size of disk
+

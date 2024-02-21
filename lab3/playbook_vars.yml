@@ -6,3 +6,60 @@
     firewall_pkg: firewalld
     python_pkg: python3-PyMySQL
     rule: http
+    web_service: "{{ web_pkg }}"
+    firewall_service: "{{ firewall_pkg }}"
+  tasks:
+
+    - name: Vérifier l'installation des paquets
+      yum:
+        name:
+          - "{{ web_pkg }}"
+          - "{{ firewall_pkg }}"
+          - "{{ python_pkg }}"
+        state: present
+
+    - name: Démarrer et activer httpd
+      service:
+        name: "{{ web_service }}"
+        state: started
+        enabled: yes
+
+    - name: Démarrer et activer firewalld
+      service:
+        name: "{{ firewall_service }}"
+        state: started
+        enabled: yes
+    
+    - name: Ouvrir le port http dans firwalld
+      firewalld:
+        zone: "public"
+        service: "{{ rule }}"
+        permanent: yes
+        state: enabled
+    - name: Reload firewall to apply changes
+      command:
+        cmd: firewall-cmd --reload
+    - name: Copier le message d'exemple
+      copy:
+        content: "Example web content"
+        dest: "/var/www/html/index.html"
+        owner: root
+        group: root
+        mode: "0644"
+
+- name: Vérifier la configuration de httpd
+  hosts: node1
+  become: false
+  tasks:
+    - name: Vérifier que le serveur HTTP renvoie le code 200
+      uri:
+        url: http://localhost
+        method: GET
+        return_content: no
+        status_code: 200
+      register: http_result
+
+    - name: Afficher le résultat de la vérification
+      debug:
+        var: http_result
+

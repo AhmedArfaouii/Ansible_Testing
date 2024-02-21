@@ -1,0 +1,34 @@
+---
+- hosts: node1
+  tasks:
+  - name: Copier le fichier report
+
+      src: report
+      dest: /home/ansible
+      owner: ansible
+      mode: "0644"
+
+  - name: Modifier la première ligne avec le nom de la machine
+    lineinfile:
+      path: /home/ansible/report
+      line: "Host={{ ansible_hostname }}"
+      regexp: "^Host=.*$"
+
+  - name: Modifier la deuxième ligne avec la taille de la mémoire
+    lineinfile:
+      path: /home/ansible/report
+      line: "Memory={{ ansible_memtotal_mb }} mb"
+      regexp: "^Memory=.*$"
+
+  - name: Modifier la troisième ligne avec la distribution Linux
+    lineinfile:
+      path: /home/ansible/report
+      line: "Distribution={{ ansible_distribution }}"
+      regexp: "^Distribution=.*$"
+
+  - name: Modifier la dernière ligne avec la taille du disque
+    lineinfile:
+      path: /home/ansible/report
+      line: "Disk_size={{ ansible_devices['nvme0n1']['partitions']['nvme0n1p2']['size'] }} mb"
+      regexp: "^Disk_size=.*$"
+
