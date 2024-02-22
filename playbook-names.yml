@@ -1,0 +1,15 @@
+---
+- hosts: all
+  tasks:
+    - name: Créer l'utilisateur ansible1 sur la machine ansible1
+      user:
+        name: ansible1
+        state: present
+      when: ansible_hostname == "ansible1"
+
+    - name: Créer l'utilisateur ansible2 sur la machine ansible2
+      user:
+        name: ansible2
+        state: present
+      when: ansible_hostname == "ansible2"
+

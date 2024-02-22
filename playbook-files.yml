@@ -1,0 +1,15 @@
+---
+- hosts: node1
+  vars_files:
+    - /var/variables.yml
+
+  tasks:
+    - name: Créer les fichiers avec le contenu et les permissions spécifiés
+      copy:
+        dest: "{{ item.path }}"
+        content: "{{ item.contenu }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+      loop: "{{ files }}"
+
