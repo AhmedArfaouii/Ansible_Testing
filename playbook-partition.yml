@@ -1,0 +1,14 @@
+---
+- hosts: node1
+
+  tasks:
+
+    - name: Créer une partition de 1G sur nvme0n2
+      parted:
+        device: /dev/nvme0n2
+        number: 1
+        state: present
+        part_start: 1MiB
+        part_end: 1GiB
+      when: disk_check.rc == 0
+
